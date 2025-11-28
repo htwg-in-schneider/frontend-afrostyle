@@ -1,6 +1,8 @@
 # frontend-afrostyle
 
-This template should help get you started developing with Vue 3 in Vite.
+Frontend for a string instrument webshop.
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-blue?style=for-the-badge)](https://github.com/htwg-in-schneider/frontend-afrostyle/)
 
 ## Recommended IDE Setup
 
@@ -36,3 +38,29 @@ npm run dev
 ```sh
 npm run build
 ```
+
+
+
+## Iterations
+
+### Iteration 0: Getting started
+
+Created new Vue project with `npm create vue:latest`.
+
+### Iteration 1: Static content
+
+Made static product page from mock work as a Vue project:
+
+- Source: kategorie.html from static project
+- Logo and CSS go into assets folder
+- index.html: link CSS and bootstrap JS
+- App.vue: Main content goes here. Logo image link adapted.
+
+
+
+
+### Iteration 2: GitHub Page deployment
+
+- Added `.github/workflows/build-and-deploy.js.yml` to deploy as GitHub Page.
+- Tweaked `vite.config.js` to use correct base URL - otherwise the JS files won't be loaded when hosted as a GitHub page.
+- Added custom favicon
