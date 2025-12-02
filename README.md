@@ -64,3 +64,54 @@ Made static product page from mock work as a Vue project:
 - Added `.github/workflows/build-and-deploy.js.yml` to deploy as GitHub Page.
 - Tweaked `vite.config.js` to use correct base URL - otherwise the JS files won't be loaded when hosted as a GitHub page.
 - Added custom favicon
+
+
+### Iteration 3: Dynamic product loading from local data
+
+- Replaced static product cards with dynamic rendering using Vue's `v-for` from local `products` array in data.js.
+- Products are displayed in a grid.
+- "Details" button shows product description in an alert.
+- Product images, titles, and prices are now populated from array data.
+
+
+### Iteration 4: High-Level components
+
+- Vue components have been created inside `src/components`.
+- `ProductCard.vue` is used inside `App.vue` for showing a product summary.
+- `App.vue` is now using  `Navbar.vue`, and `Footer.vue` components for better structure.
+- Styles specific to components have been moved from `style.css` into their respective `<style scoped>` sections.
+- Logic specific to components has been moved into their respective `<script setup>` sections.
+
+
+
+
+### Iteration 5: Low-Level components
+
+- Introduced some low-level reusable components:
+  - `Button.vue`: A reusable button component with different variants (accent, secondary).
+  - `FooterLink.vue`: A link component specifically for footer links (styled appropriately).
+
+
+
+### Iteration 6: Added Vue-Router and product detail view
+
+- Integrated Vue-Router as preparation to adding different views (`router/index.js`)
+  - Important note: When hosting the app not under / on the server (as we are doing with GitHub Pages), `createWebHistory` must be provided with the app path!
+  - also `main.js` must be imported relatively
+- Updated `App.vue` to include `<router-view>` for rendering routed components.
+- Created route `/` to `ProductCatalog.vue` for the product listing page
+- Added a new product detail view that is linked from `ProductCard.vue` and can be accessed via `/product/:id`.
+
+
+
+
+
+
+### Iteration 7: State management with Pinia
+
+- Integrated Pinia for simple global state (banner visibility is saved through different views) and updated the banner component to use the store:
+  - Installed Pinia: `npm install pinia`.
+  - Added a small store: `src/stores/banner.js` (defines `isVisible` and `hideBanner()`).
+  - Registered Pinia in `src/main.js` with `createPinia()` and `app.use(pinia)`.
+  - Updated `SpecialBanner.vue` to use `useBannerStore()` and call `hideBanner` on button click.
+- Note: For persistence across reloads you can extend the store to sync with `localStorage` or use a pinia plugin, see e.g.

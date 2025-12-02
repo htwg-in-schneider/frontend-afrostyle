@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=La+Belle+Aurore&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+/* Le reste du CSS ici */
+
+
+
+
+
 body {
   background-color: #ffffff;
 }
@@ -72,12 +81,6 @@ body {
   height: 780px;
 }
 
-
-
-
-/* Import de la police "La Belle Aurore" depuis Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=La+Belle+Aurore&display=swap');
-
 .custom-navbar {
   position: absolute;
   left: 2px;       /* position X */
@@ -121,8 +124,6 @@ body {
   padding-bottom: 3rem;
 }
 
-/* Import de la police "La Belle Aurore" depuis Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 .welcome-title {
   font-family: 'Inter', sans-serif;
   color: #000;           /* texte orange */
@@ -147,22 +148,22 @@ body {
 
 }
 
-.btn-welcome {
-  background-color: #A5280D; /* bouton orange */
-  color: #fff;               /* texte blanc */
-  border: 2px solid #000;    /* contour noir */
-  padding: 10px 25px;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+.btn {
+  border-radius: 30px;
 }
 
-.btn-welcome:hover {
-  background-color: #cf7d12; /* effet survol plus foncé */
-  color: #000;               /* texte noir au survol */
-  transform: scale(1.05);    /* léger zoom au survol */
+.btn-accent {
+  background-color: #ff6600;
+  color: white;
+  border-radius: 30px;
+  padding: 0.5rem 1.5rem;
+  transition: 0.3s;
 }
 
+.btn-accent:hover {
+  background-color: #e65c00;
+  color: #fff;
+}
 
 .illustration img{
   max-height: 1000px;
@@ -172,27 +173,4 @@ body {
   padding-top: 25px;
 }
 
-
-
-/* Import de la police "La Belle Aurore" depuis Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=La+Belle+Aurore&display=swap');
-footer {
-  font-family: 'La Belle Aurore', cursive;
-}
-
-.infos {
-  font-size: 32px;         /* taille du texte */
-  font-weight: 400px;      /* regular */
-  border: transparent;
-  margin: 0 7.5rem;          /* espace entre les liens */
-}
-.social-icons i {
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.social-icons i:hover {
-  color: #EA9424; /* orange au survol */
-}
 
