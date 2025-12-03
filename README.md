@@ -114,4 +114,49 @@ Made static product page from mock work as a Vue project:
   - Added a small store: `src/stores/banner.js` (defines `isVisible` and `hideBanner()`).
   - Registered Pinia in `src/main.js` with `createPinia()` and `app.use(pinia)`.
   - Updated `SpecialBanner.vue` to use `useBannerStore()` and call `hideBanner` on button click.
-- Note: For persistence across reloads you can extend the store to sync with `localStorage` or use a pinia plugin, see e.g.
+- Note: For persistence across reloads you can extend the store to sync with `localStorage` or use a pinia plugin.
+
+
+
+### Iteration 8: Dynamic product loading via REST
+
+- Replaced static product data with data from REST endpoints.
+- Adapted `ProductCard.vue` and `ProductDetail.vue` accordingly.
+- Only very basic error handling is implemented.
+
+
+
+
+### Iteration 9: Complete CRUD of products via REST
+
+- Added a `CreateProduct` view to allow users to create new products via a form.
+  - Simple implementation with JS alerts for success/error handling.
+- Added an `EditProduct` view to allow users to edit or delete existing products.
+  - Simple implementation with JS alerts for success/error handling.
+- Integrated API calls for creating, updating, and deleting products:
+  - **Create**: Sends a `POST` request to `/api/product`.
+  - **Update**: Sends a `PUT` request to `/api/product/:id`.
+  - **Delete**: Sends a `DELETE` request to `/api/product/:id`.
+- Updated the `ProductCatalog` view to include a "Neues Produkt" button to navigate to the `CreateProduct` view.
+- Updated the `ProductCard` component to include a "Bearbeiten" button to navigate to the `EditProduct` view.
+
+
+
+
+### Iteration 10: Product Search and Filter
+
+- Added `ProductFilter.vue` component for filtering products by name and category.
+  - Fetches available categories and their translations from the backend (`/api/category`).
+  - Emits search parameters to the parent component.
+- Updated `ProductCatalog.vue` to handle search and filter events.
+  - `fetchProducts` now accepts filter parameters and appends them to the API request (`/api/product?name=...&category=...`).
+- Also updated dependencies in `package.json`
+
+
+### Iteration 11: Product Reviews (1:n)
+
+- Integrated product reviews into the frontend
+  - Product - Review is a 1:n relationship 
+- Added `ProductReviews.vue` component to fetch and display reviews for a specific product.
+  - Creation and deletion of reviews is currently not supported.
+- Updated `ProductDetail.vue` to include the `ProductReviews` component.

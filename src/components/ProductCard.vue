@@ -15,8 +15,11 @@
         <img :src="product.imageUrl" class="card-img-top" alt="Produktbild">
         <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ product.title }}</h5>
-            <NavButton variant="accent" class="mt-auto" :to="`/product/${product.id}`">
+            <NavButton variant="accent" class="mt-auto" :to="`/product/view/${product.id}`">
                 Details
+            </NavButton>
+            <NavButton variant="secondary" class="mt-auto" :to="`/product/edit/${product.id}`">
+                Bearbeiten
             </NavButton>
         </div>
     </div>
