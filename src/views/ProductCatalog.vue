@@ -34,6 +34,26 @@ async function fetchProducts(filters = {}) {
     console.error('Error fetching products:', error);
   }
 }
+const normalizeImageUrl = (url) => {
+  if (!url) return '';
+  
+  // Si c'est déjà un lien direct (raw), on ne touche à rien
+  if (url.includes('raw.githubusercontent.com')) {
+    return url;
+  }
+
+  // Si c'est un lien GitHub standard avec /blob/, on le transforme
+  if (url.includes('github.com')) {
+    return url
+      .replace('github.com', 'raw.githubusercontent.com')
+      .replace('/blob/', '/'); // Utilise '/blob/' avec les slashs pour être précis
+  }
+  
+  return url;
+};
+
+
+
 
 </script>
 
@@ -59,12 +79,13 @@ async function fetchProducts(filters = {}) {
         <!-- Product Grid -->
         <div class="container py-5">
             <div class="row g-4">
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="product in products":key="product.id">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="product in products" :key="product.id">
                     <div class="card h-100 shadow-sm">
-                        <img :src="product.imageUrl" class="card-img-top" alt="Produktbild">
+                        <img :src="normalizeImageUrl(product.imageUrl)" class="card-img-top" alt="productBild" /> 
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-id">{{ product.id }}</h5>
-                            <NavButton variant="accent" class="mt-auto" :to="`/product/${product.id}`">
+                            <h1 class="card-id">{{ product.title }}</h1>
+                            <h2 class="card-id">{{ product.description }}</h2>
+                            <NavButton variant="accent" class="mt-auto" :to="`/product/view/${product.id}`">
                                 Details
                             </NavButton>
                         </div>

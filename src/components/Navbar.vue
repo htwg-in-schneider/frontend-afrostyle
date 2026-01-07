@@ -48,17 +48,39 @@
     </header>
     <!-- NAVBAR SECONDAIRE -->
     <nav class="navbar custom-navbar">
-        <div class="container d-flex justify-content-center">
-            <ul class="navbar-nav text-center flex-row">
-                <li class="nav-item"><a href="Bogolan_textile" class="nav-link custom-text">Textile_Stoffe</a></li>
-                <li class="nav-item"><a href="#" class="nav-link custom-text">Bekleidung</a></li>
-                <li class="nav-item"><a href="#" class="nav-link custom-text">Accessoires</a></li>
-                <li class="nav-item"><a href="#" class="nav-link custom-text">Home</a></li>
-            </ul>
-        </div>
+      <div class="container d-flex justify-content-center">
+          <ul class="navbar-nav text-center flex-row">
+              <li class="nav-item"><a href="Bogolan_textile" class="nav-link custom-text">Textile_Stoffe</a></li>
+              <li class="nav-item"><a href="#" class="nav-link custom-text">Bekleidung</a></li>
+              <li class="nav-item"><a href="#" class="nav-link custom-text">Accessoires</a></li>
+              <li class="nav-item"><a href="#" class="nav-link custom-text">Home</a></li>
+          </ul>
+      </div>
     </nav>
 </template>
 
 <style scoped>
+/* Force la navbar à ne prendre que la place nécessaire */
+.custom-navbar {
+  background-color: #f8f9fa; /* ou votre couleur */
+  border-bottom: 1px solid #ddd;
+  min-height: auto !important; 
+  padding: 0;
+  margin: 0;
+}
 
+.custom-navbar .navbar-nav {
+  gap: 20px; /* Espace entre les liens textiles, accessoires, etc. */
+}
+
+/* Empêche la navbar de déborder verticalement sur le contenu */
+.custom-navbar .container {
+  height: 50px; /* Ajustez selon vos besoins */
+}
+
+.nav-link.custom-text {
+  padding: 10px 15px;
+  color: #333;
+  text-decoration: none;
+}
 </style>

@@ -3,6 +3,8 @@ import ProductCatalog from '@/views/ProductCatalog.vue';
 import ProductDetail from '@/views/ProductDetail.vue';
 import CreateProduct from '@/views/CreateProduct.vue';
 import EditProduct from '@/views/EditProduct.vue';
+import ModifyProduct from '@/views/ModifyProduct.vue';
+
 
 const routes = [
   { path: '/', component: ProductCatalog },
@@ -14,6 +16,8 @@ const routes = [
   },
   { path: '/product/create', component: CreateProduct },
   { path: '/product/edit/:id', component: EditProduct },
+  { path: '/product/modify-product/:id', component: ModifyProduct },
+ 
 ];
 
 const router = createRouter({
