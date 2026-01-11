@@ -62,32 +62,29 @@ const normalizeImageUrl = (url) => {
     <Navbar />
 
         <!-- Category Header -->
-        <section class="hero text-center position-relative py-5">
-
-            <!-- Demi-cercle ovale en fond -->
-            <div class="ovale_Shape position-absolute w-100 ">
-                <img src="./image/Frame 14.svg" alt="Shape" class="img-fluid" style= "max-height: 1200px; z-index: 1; position: relative;">
+        <header class="header-container position-relative overflow-hidden mt-5">
+            <div class="header-text">
+                <h1 class="textile-title">Textile Stoffe</h1>
+                <p class="subtitle">Entdecke unsere Bogolan_Textile.</p>
             </div>
-            <div >
-                <p>Entdecke unsere Bogolan_Textile.</p>
+            <div class="filter-section mt-4">
+                <ProductFilter @product-update="fetchProducts" />
             </div>
-        </section>
-
-        <!-- Search and Filter -->
-        <ProductFilter @product-update="fetchProducts" />
+        </header>
 
         <!-- Product Grid -->
-        <div class="container py-5">
-            <div class="row g-4">
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="product in products" :key="product.id">
-                    <div class="card h-100 shadow-sm">
-                        <img :src="normalizeImageUrl(product.imageUrl)" class="card-img-top" alt="productBild" /> 
+        <div class="container py-5 position-relative product-grid-container">
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col" v-for="product in products" :key="product.id">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card h-100 shadow-sm border-0">
+                            <img :src="normalizeImageUrl(product.imageUrl)" class="card-img-top h-100 w-100 object-fit-cover" alt="product">
+                        </div>
                         <div class="card-body d-flex flex-column">
-                            <h1 class="card-id">{{ product.title }}</h1>
-                            <h2 class="card-id">{{ product.description }}</h2>
-                            <NavButton variant="accent" class="mt-auto" :to="`/product/view/${product.id}`">
-                                Details
-                            </NavButton>
+                            <h5 class="fw-bold">{{ product.title }}</h5>
+                            <p class="text-muted small flex-grow-1">{{ product.description }}</p>
+                            <NavButton variant="accent" :to="`/product/view/${product.id}`">Details</NavButton>
                         </div>
                     </div>
                 </div>
@@ -107,3 +104,52 @@ const normalizeImageUrl = (url) => {
     <Footer />
 
 </template>
+
+<style scoped>
+.header-container {
+  /* Ajustez cette valeur (ex: 80px ou 100px) pour descendre l'entête */
+  margin-top: 80px; 
+  
+  min-height: 250px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centre horizontalement le texte et le filtre */
+  justify-content: center;
+}
+
+.header-text {
+  text-align: center;
+  z-index: 1;
+}
+
+.textile-title {
+  font-family: 'cursive', sans-serif;
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* On s'assure que la barre de recherche prend une largeur correcte */
+.filter-section {
+  width: 100%;
+  max-width: 800px;
+  z-index: 2;
+}
+
+/* On s'assure que les cartes produits sont bien opaques pour masquer l'ellipse */
+.card {
+  background-color: #ffffff !important; 
+  position: relative;
+  z-index: 1; /* Supérieur à l'ellipse */
+}
+
+/* Pour que les images remplissent bien leur cadre sans déformation */
+.object-fit-cover {
+  object-fit: cover;
+}
+</style>

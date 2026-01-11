@@ -5,172 +5,74 @@
 
 
 
-
-
-body {
-  background-color: #ffffff;
+/* --- GLOBAL & HEADER --- */
+.main-header {
+  width: 100%;
+  position: relative;
 }
 
-.header-with-eclipse .container {
-  display: flex;
-  justify-content: space-between;  /* Logo - Shape - Icônes */
-  align-items: center;             /* Centrage vertical */
-  text-align: center;
-  flex-wrap: wrap;
-  height: 450px;
+.logo-img {
+  height: 80px; /* Taille fixe pour stabiliser le header */
+  width: auto;
+}
+
+/* --- ELLIPSE --- */
+.nav-shape-ellipse {
+  position: absolute;
+  width: 100px;
+  left: 50%; /* Position relative au container, pas fixe en px */
+  right: 50%;
+  top: 20%;
+  transform: translateY(-50%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 
-.semi_ovale_Shape img {
-  height: auto;
-  max-width: 180px;
-  transition: all 0.3s ease;
-}
-.semi_ovale_Shape {
-  flex: 1;                        /* prend l’espace central */
-  display: flex;
-  justify-content: center;        /* centre le shape horizontalement */
-}
 
-.logo {
-  width: 138px;
-  height: 127px;
-}
-/* Icônes */
-.navbar-nav i {
-  color: #000;
-  transition: color 0.2s;
-}
-
-.navbar-nav i:hover {
-  color: #C76B52; /* Couleur d’accent au survol */
-}
-
-.nav-link i {
+/* --- ICONES --- */
+.header-icons .bi {
   font-size: 1.5rem;
   color: #000;
-  transition: color 0.3s ease;
 }
 
-.nav-link:hover i {
-  color: #EA9424; /* couleur accent */
+/* --- NAVBAR SECONDAIRE (Catégories) --- */
+.secondary-nav {
+  background-color: #f1f1f1; /* Une couleur légère pour voir la zone */
+  padding: 15px 0;
 }
 
-.badge {
-  font-size: 0.7rem;
-}
-
-.hero {
-  position: relative; /* nécessaire pour que le shape position absolute soit relatif à la section */
-}
-
-.ovale_Shape {
-  bottom: 0;          /* place le shape en bas de la section */
-  left: 50%;
-  transform: translateX(-12%);
-  z-index: 0;         /* derrière l'image */
-  right: 0px;       /* position X */
-  top: -200px;
-  
-}
-
-.hero-image img {
-  position: relative;
-  z-index: 1;         /* devant le shape */
-  max-height: 1443px;
-  height: 780px;
-}
-
-.custom-navbar {
-  position: absolute;
-  left: 2px;       /* position X */
-  top: 250px; 
-  background-color: transparent;   /* fond blanc */
-  border: transparent;   /* bordure externe noire */
-  padding: 0px;
-  width: 1438px;
-  height: 500px;
-  font-weight: 400px;      /* regular */
-  gap: 136px;
-  
+.nav-links-list {
+  display: flex;
+  justify-content: center;
+  gap: 50px; /* Espace entre les mots */
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .custom-text {
-  font-family: 'La Belle Aurore', cursive; /* police manuscrite */
-  color: #EA9424;            /* texte orange */
-  font-size: 32px;         /* taille du texte */
-  font-weight: 500px;
-  border: transparent;
-  margin: 0 7.5rem;          /* espace entre les liens */
-  text-shadow: 
-    -1px -1px 0 #000,        /* contour noir autour du texte */
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000;
-
-  
+  font-family: 'La Belle Aurore', cursive;
+  color: #EA9424;
+  font-size: 28px;
+  text-decoration: none;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  transition: transform 0.3s;
+  display: inline-block;
 }
 
 .custom-text:hover {
-  transform: scale(1.1);     /* léger zoom au survol */
+  transform: scale(1.1);
+  color: #EA9424;
 }
 
-
-/* Texte et bouton de la section Welcome */
-
-.welcome-section {
-  background-color: #fff; /* fond blanc */
-  padding-top: 3rem;
-  padding-bottom: 3rem;
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .nav-links-list {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .nav-shape-ellipse {
+    display: none;
+  }
 }
-
-.welcome-title {
-  font-family: 'Inter', sans-serif;
-  color: #000;           /* texte orange */
-  font-size: 32px;
-  font-weight: 700;
-  text-shadow: 
-    -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000;       /* contour noir */
-  margin-bottom: 1rem;
-}
-
-.welcome-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: #000;
-  max-width: 390px;         /* limite la largeur du texte */
-  margin: 0 auto;
-  max-height: 66px; 
-  font-weight: 400px;      /* regular */
-
-}
-
-.btn {
-  border-radius: 30px;
-}
-
-.btn-accent {
-  background-color: #ff6600;
-  color: white;
-  border-radius: 30px;
-  padding: 0.5rem 1.5rem;
-  transition: 0.3s;
-}
-
-.btn-accent:hover {
-  background-color: #e65c00;
-  color: #fff;
-}
-
-.illustration img{
-  max-height: 1000px;
-  height: 1000px;
-  gap: auto;
-  padding-bottom: 25px;
-  padding-top: 25px;
-}
-
-
