@@ -1,38 +1,26 @@
 <script setup>
 const props = defineProps({
-  text: {
-    type: String,
-    required: true
-  },
-  label: {
-    type: String,
-    required: false,
-    default: ''
-  },
-  href: {
-    type: String,
-    required: false,
-    default: '#'
-  },
+  text: String,
+  href: { type: String, default: '#' }
 });
 </script>
 
 <template>
-  <a :href="href" class="footer-link" :aria-label="label">
+  <router-link :to="href" class="footer-link">
     {{ text }}
-  </a>
+  </router-link>
 </template>
 
 <style scoped>
-/* Liens du footer adaptés à la classe custom-footer */
 .footer-link {
   font-family: 'La Belle Aurore', cursive;
-  color: #dcdcdc;
+  color: #333; /* Couleur plus foncée pour être visible */
   text-decoration: none;
+  font-size: 1.2rem;
   transition: color 0.3s ease;
 }
 
 .footer-link:hover {
-  color: #ff6600; 
+  color: #A03E15; 
 }
 </style>

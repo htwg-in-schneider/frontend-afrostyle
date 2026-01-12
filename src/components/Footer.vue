@@ -3,67 +3,54 @@ import FooterLink from './FooterLink.vue';
 </script>
 
 <template>
-  <footer class="custom-footer bg-light py-4">
-    <div class="container d-flex justify-content-between align-items-center flex-wrap">
+  <footer class="custom-footer bg-light py-4 border-top">
+    <div class="container d-flex justify-content-between align-items-start flex-wrap">
 
-      <!-- Contact + Social Icons -->
-      <div class="d-flex align-items-center gap-3">
-        <FooterLink text="Kontakt" label="Kontakt" href="/kontakt" />
-        <span>01590256088</span>
-        <div class="social-icons mt-2 d-flex gap-2">
-        <span>
-          <a href="https://www.instagram.com/deinprofil" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-            <i class="bi bi-instagram"></i>
-          </a>
-          <a href="https://www.facebook.com/deinprofil" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <i class="bi bi-facebook"></i>
-          </a>
-        </span>
+      <div class="d-flex flex-column align-items-start gap-2">
+        <span class="contact-number">01590256088</span>
+        <div class="social-icons d-flex gap-3">
+          <a href="https://www.instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+          <a href="https://www.facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
         </div>
       </div>
 
-<!-- Hilfe -->
-<div class="d-flex flex-column">
-  <FooterLink text="Hilfe" label="Hilfe" href="/hilfe" />
-</div>
+      <div class="d-flex flex-column">
+        <FooterLink text="Hilfe" href="/hilfe" />
+        <FooterLink text="Blog" href="/blog" />
+      </div>
 
-<!-- Blog -->
-<div class="d-flex flex-column">
-  <FooterLink text="Blog" label="Blog" href="/blog" />
-</div>
-
+      <div class="d-flex flex-column align-items-end">
+        <FooterLink text="Impressum" href="/impressum" />
+        <FooterLink text="Datenschutz" href="/datenschutz" />
+      </div>
 
     </div>
   </footer>
 </template>
 
 <style scoped>
-/* Police du footer */
 .custom-footer {
   font-family: 'La Belle Aurore', cursive;
 }
 
-/* Social icons */
+/* On s'assure que les liens ont un peu d'espace entre eux verticalement */
+.d-flex.flex-column {
+  gap: 5px;
+}
+
+.contact-number {
+  font-size: 1.1rem;
+  color: #555;
+}
+
 .social-icons i {
   font-size: 1.5rem;
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
   color: #555;
+  transition: transform 0.3s ease;
 }
 
 .social-icons i:hover {
   color: #EA9424;
-  transform: scale(1.2);
-}
-
-/* Liens FooterLink */
-.footer-link {
-  color: #aaa;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.footer-link:hover {
-  color: #ff6600;
+  transform: scale(1.1);
 }
 </style>

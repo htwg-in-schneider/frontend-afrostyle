@@ -1,64 +1,119 @@
 <script setup>
 </script>
 <template>      
-    <!-- HEADER -->
-    <header class= "header-with-eclipse" >  
-      <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-          <!-- Logo -->
-          <router-link class="navbar-brand fw-bold text-accent" to="/">
-            <img src="../assets/logo_Desktop.svg" alt="afroStslyle Logo" height="100">
-          </router-link>
+  <!-- HEADER -->
+  <header class="main-header">  
+    <div class="header-top-bar">
+      <div class="container d-flex justify-content-between align-items-center">
+        <!-- Logo -->
+        <router-link to="/" class="logo-wrapper">
+          <img src="../assets/logo_Desktop.svg" alt="afroStslyle Logo" class="logo-img">
+        </router-link>
 
-          <!-- Demi-cercle ovale -->
+        <!-- Demi-cercle ovale -->
    
-          <img src="../assets/image/Ellipse1.svg" alt="Shape" class="img-fluid ">
-    
-          <!-- Bouton hamburger (mobile) -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+        <div class="ellipse-container">
+          <img src="../assets/Ellipse1.svg" alt="" class="nav-shape-ellipse">
+        </div>
 
-
-
-          <!-- Liens / icônes -->
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto d-flex align-items-center gap-3 mb-0">
-              <li class="nav-item">
-                <a class="nav-link" href="recherche.html" aria-label="Recherche">
-                  <i class="bi bi-search fs-4"></i>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link position-relative" href="panier.html" aria-label="Panier">
-                  <i class="bi bi-cart fs-4"></i>
-                  <span class="position-absolute top-0 start-100 translate-middle ">
-                  </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="profil.html" aria-label="Profil">
-                  <i class="bi bi-person-circle" fs-4></i>
-                </a>
-              </li>
-            </ul>
-          </div>
+        <!-- Liens / icônes -->
+        <div class="header-icons">
+          <router-link to="/recherche" class="icon-link"><i class="bi bi-search"></i></router-link>
+          <router-link to="/panier" class="icon-link"><i class="bi bi-cart"></i></router-link>
+          <router-link to="/profil" class="icon-link"><i class="bi bi-person-circle"></i></router-link>
+        </div>
+      </div>
+    </div>
+      <!-- NAVBAR SECONDAIRE -->
+      <nav class="secondary-nav">
+        <div class="container">
+          <ul class="nav-links-list">
+            <li><router-link to="/" class="custom-text">Textile_Stoffe</router-link></li>
+            <li><a href="#" class="custom-text">Bekleidung</a></li>
+            <li><a href="#" class="custom-text">Accessoires</a></li>
+            <li><a href="#" class="custom-text">Home</a></li>
+          </ul>
         </div>
       </nav>
     </header>
-    <!-- NAVBAR SECONDAIRE -->
-    <nav class="navbar custom-navbar">
-        <div class="container d-flex justify-content-center">
-            <ul class="navbar-nav text-center flex-row">
-                <li class="nav-item"><a href="Bogolan_textile" class="nav-link custom-text">Textile_Stoffe</a></li>
-                <li class="nav-item"><a href="#" class="nav-link custom-text">Bekleidung</a></li>
-                <li class="nav-item"><a href="#" class="nav-link custom-text">Accessoires</a></li>
-                <li class="nav-item"><a href="#" class="nav-link custom-text">Home</a></li>
-            </ul>
-        </div>
-    </nav>
 </template>
 
 <style scoped>
+/* Conteneur principal */
+.main-header {
+  width: 100%;
+  background-color: #fff;
+}
 
+/* Barre du haut (Logo + Icones) */
+.header-top-bar {
+  height: 100px; /* On fixe la hauteur pour éviter les décalages */
+  display: flex;
+  align-items: center; /* Aligne verticalement au centre */
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.logo-img {
+  height: 70px;
+  width: auto;
+}
+
+/* --- ICONES (CORRECTION FINALE) --- */
+.header-icons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  height: 100%; /* Prend toute la hauteur du parent pour être centrée */
+}
+
+.icon-link {
+  font-size: 1.5rem;
+  color: #000 !important;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.icon-link:hover {
+  transform: scale(1.1);
+  color: #EA9424 !important;
+}
+
+/* --- ELLIPSE --- */
+.ellipse-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none; /* L'ellipse ne doit JAMAIS bloquer le clic */
+}
+
+.nav-shape-ellipse {
+  height: 50px;
+  opacity: 0.6;
+}
+
+/* --- NAV SECONDAIRE --- */
+.secondary-nav {
+  background-color: #fff;
+  padding: 15px 0;
+}
+
+.nav-links-list {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.custom-text {
+  font-family: 'La Belle Aurore', cursive;
+  color: #EA9424;
+  font-size: 26px;
+  text-decoration: none;
+  text-shadow: 1px 1px 0 #000;
+}
 </style>

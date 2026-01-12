@@ -16,4 +16,7 @@ const buttonClass = `btn btn-${props.variant}`;
     <slot />
   </router-link>
 </template>
+<style scoped>
+  
+</style>
 

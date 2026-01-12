@@ -1,18 +1,13 @@
 <script setup>
 const props = defineProps({
   type: { type: String, default: 'button' },
-  variant: { type: String, default: 'accent' },
-  onClick: { type: Function, default: null }
+  variant: { type: String, default: 'accent' }
 });
 
-const buttonClass = `btn btn-${props.variant}`;
 </script>
 
 <template>
-  <button :type="type" :class="buttonClass" @click="onClick">
+  <button :type="type" :class="`btn btn-${variant}`" >
     <slot />
   </button>
 </template>
-
-<style scoped>
-</style>
