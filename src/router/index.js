@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/AfroHome.vue';
 import Impressum from '@/views/Impressum.vue';
 import DatenschutzView from '@/views/DatenschutzView.vue';
+import UserManagement from '../views/UserManagement.vue';
 
 // 2. TES COMPOSANTS EXISTANTS - Le Catalogue (Stammdaten)
 import ProductCatalog from '@/views/ProductCatalogTextile.vue';
@@ -57,6 +58,11 @@ const routes = [
     path: '/product/modify-product/:id', 
     name: 'product-modify',
     component: ModifyProduct 
+  },
+  {
+    path: '/admin/users',
+    name: 'UserManagement',
+    component: UserManagement
   },
 ];
 

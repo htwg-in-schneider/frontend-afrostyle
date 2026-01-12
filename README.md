@@ -174,3 +174,11 @@ Made static product page from mock work as a Vue project:
 Startseite: Implement der Startseite mit Kontaktformular (den
 Formularinhalt ist dank mailto:-Link verschickt) und funktionierenden Links zu Impressum und
 Datenschutzerklärung sind in Responsive Design. 
+
+
+
+
+### Iteration 13: Stammdaten Frage (b)
+
+-CRUD validierung nur durch Admin
+- link Usersverwaltung erfolgt unter: ´http://localhost:5173/admin/users´
