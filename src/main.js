@@ -9,17 +9,19 @@ const pinia = createPinia()
 const app = createApp(App)
 
 // Configuration d'Auth0 adaptée pour GitHub Pages
+// main.js
+import { createAuth0 } from '@auth0/auth0-vue';
+
 app.use(
   createAuth0({
     domain: "dev-5uu2dt8o1qjjp0g1.us.auth0.com",
-    client_id: "3VZ6m7z1hq3lFiOwhZ44F4pXTBNg7cPO",
+    clientId: "3VZ6m7z1hq3lFiOwhZ44F4pXTBNg7cPO", // <-- VÉRIFIE CETTE LIGNE (Attention au 'I' majuscule dans clientId)
     authorizationParams: {
-      // Syntaxe recommandée à la page 21 du PDF :
       redirect_uri: window.location.origin + window.location.pathname,
       audience: "https://afrostyle-api"
     }
   })
-)
+);
 
 app.use(router)
 app.use(pinia)
