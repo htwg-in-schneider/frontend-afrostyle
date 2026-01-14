@@ -12,10 +12,12 @@ const app = createApp(App)
 // main.js
 import { createAuth0 } from '@auth0/auth0-vue';
 
+// ... (reste de ton code app)
+
 app.use(
   createAuth0({
     domain: "dev-5uu2dt8o1qjjp0g1.us.auth0.com",
-    clientId: "3VZ6m7z1hq3lFiOwhZ44F4pXTBNg7cPO", // <-- VÉRIFIE CETTE LIGNE (Attention au 'I' majuscule dans clientId)
+    clientId: "3VZ6m7z1hq3lFiOwhZ44F4pXTBNg7cPO", // <-- Vérifie bien l'orthographe "clientId"
     authorizationParams: {
       redirect_uri: window.location.origin + window.location.pathname,
       audience: "https://afrostyle-api"
