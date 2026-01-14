@@ -14,8 +14,8 @@ app.use(
     domain: "dev-5uu2dt8o1qjjp0g1.us.auth0.com",
     client_id: "3VZ6m7z1hq3lFiOwhZ44F4pXTBNg7cPO",
     authorizationParams: {
-      // On ajoute explicitement le nom du dépôt pour éviter les erreurs 404 au retour de login
-      redirect_uri: window.location.origin + '/frontend-afrostyle/',
+      // Syntaxe recommandée à la page 21 du PDF :
+      redirect_uri: window.location.origin + window.location.pathname,
       audience: "https://afrostyle-api"
     }
   })
