@@ -6,25 +6,22 @@ import App from './App.vue'
 import router from './router'
 
 const app = createApp(App)
-const pinia = createPinia()
 
-// Configuration Auth0 - Conforme à la page 21 du PDF de déploiement
-app.use(
-  createAuth0({
-    domain: "dev-5uu2dt8o1qjjp0g1.us.auth0.com",
-    clientId: "3VZ6m7z1hq3lFiOwhZ44F4pXTBNg7cPO",
+// Initialisation d'Auth0 avec les variables d'environnement
+const auth0 = createAuth0({
+    domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
     authorizationParams: {
-      // Le secret pour que ça marche partout (Local + GitHub Pages)
-      redirect_uri: window.location.origin + window.location.pathname,
-      audience: "https://afrostyle-api"
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+        // Indispensable pour GitHub Pages (Page 21 du PDF)
+        redirect_uri: window.location.origin + window.location.pathname
     }
-  })
-)
+})
 
+app.use(createPinia())
 app.use(router)
-app.use(pinia)
+app.use(auth0)
 
 app.mount('#app')
 
-// Utile pour déboguer ton point (c) du devoir
 console.log('API Base URL:', import.meta.env.VITE_API_BASE_URL)
