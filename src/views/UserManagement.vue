@@ -1,31 +1,47 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue'; // 'computed' hinzugefügt für Rollenprüfung
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-import { useAuth0 } from '@auth0/auth0-vue'; // AJOUT : Import Auth0
+import { useAuth0 } from '@auth0/auth0-vue'; // Auth0-Modul importieren
 
-const { getAccessTokenSilently } = useAuth0(); // AJOUT : Outil pour le jeton
+// Auth0-Funktionen extrahieren
+const { getAccessTokenSilently, user, isAuthenticated } = useAuth0(); 
 
+// API-Konfiguration aus Umgebungsvariablen
 const url = `${import.meta.env.VITE_API_BASE_URL}/api/users`;
 const users = ref([]);
 const loading = ref(true);
-
 const newUser = ref({ name: '', email: '', role: 'USER' });
 
 /**
- * ETAPE 1 : READ (Avec Token)
+ * LOGIK: ADMIN-RECHTE PRÜFEN
+ * Ein einfacher Nutzer darf die Liste nicht sehen.
+ * Prüfung basierend auf der E-Mail des angemeldeten Benutzers.
+ */
+const isAdmin = computed(() => {
+    // ACHTUNG: Ersetzen Sie dies durch Ihre tatsächliche Admin-E-Mail
+    return user.value?.email === "votre-email@exemple.com"; 
+});
+
+/**
+ * SCHRITT 1: READ - Benutzerliste laden (Nur für Admins)
  */
 const fetchUsers = async () => {
+    if (!isAdmin.value) {
+        loading.value = false;
+        return;
+    }
+
     try {
-        const token = await getAccessTokenSilently(); // RÉCUPÉRER LE JETON
+        const token = await getAccessTokenSilently(); // JWT abrufen
         const response = await fetch(url, {
-            headers: { 'Authorization': `Bearer ${token}` } // ENVOYER LE JETON
+            headers: { 'Authorization': `Bearer ${token}` } // Token im Header senden
         });
         if (response.ok) {
             users.value = await response.json();
         }
     } catch (error) {
-        console.error("Erreur chargement:", error);
+        console.error("Fehler beim Laden:", error);
     } finally {
         loading.value = false;
     }
@@ -34,82 +50,133 @@ const fetchUsers = async () => {
 onMounted(fetchUsers);
 
 /**
- * ETAPE 2 : CREATE (Avec Token)
+ * SCHRITT 2: CREATE - Benutzer erstellen
  */
 async function createUser() {
     if (!newUser.value.name || !newUser.value.email.includes('@')) {
-        alert("Validation Frontend : Nom et Email (@) requis.");
+        alert("Eingabe ungültig: Name und E-Mail erforderlich.");
         return;
     }
 
     try {
-        const token = await getAccessTokenSilently(); // RÉCUPÉRER LE JETON
+        const token = await getAccessTokenSilently();
         const response = await fetch(url, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // ENVOYER LE JETON
+                'Authorization': `Bearer ${token}` 
             },
             body: JSON.stringify(newUser.value)
         });
 
         if (response.ok) {
-            alert("Utilisateur créé !");
+            alert("Erfolgreich erstellt!");
             newUser.value = { name: '', email: '', role: 'USER' };
             await fetchUsers();
-        } else {
-            alert("Erreur Backend : " + response.status);
         }
     } catch (error) {
-        alert("Erreur lors de la création.");
+        alert("Fehler beim Erstellen des Benutzers.");
     }
 }
 
 /**
- * ETAPE 3 : UPDATE (Avec Token)
+ * SCHRITT 3: UPDATE - Benutzerdaten aktualisieren
  */
-async function saveUser(user, newRole = null) {
-    const updatedUser = { ...user, role: newRole || user.role };
+async function saveUser(userObj, newRole = null) {
+    const updatedUser = { ...userObj, role: newRole || userObj.role };
 
     try {
-        const token = await getAccessTokenSilently(); // RÉCUPÉRER LE JETON
-        const response = await fetch(`${url}/${user.id}`, {
+        const token = await getAccessTokenSilently();
+        const response = await fetch(`${url}/${userObj.id}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // ENVOYER LE JETON
+                'Authorization': `Bearer ${token}` 
             },
             body: JSON.stringify(updatedUser)
         });
 
         if (response.ok) {
-            if (newRole) user.role = newRole;
-            alert("Mise à jour réussie !");
+            if (newRole) userObj.role = newRole;
+            alert("Aktualisierung erfolgreich!");
         }
     } catch (error) {
-        alert("Erreur de connexion.");
+        alert("Fehler bei der Aktualisierung.");
     }
 }
 
 /**
- * ETAPE 4 : DELETE (Avec Token)
+ * SCHRITT 4: DELETE - Benutzer löschen
  */
 async function deleteUser(id) {
-    if (!confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
+    if (!confirm("Möchten Sie diesen Benutzer wirklich löschen?")) return;
 
     try {
-        const token = await getAccessTokenSilently(); // RÉCUPÉRER LE JETON
+        const token = await getAccessTokenSilently();
         const response = await fetch(`${url}/${id}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` } // ENVOYER LE JETON
+            headers: { 'Authorization': `Bearer ${token}` } 
         });
 
         if (response.ok) {
-            alert("Utilisateur supprimé.");
+            alert("Benutzer gelöscht.");
             await fetchUsers();
         }
     } catch (error) {
-        alert("Erreur réseau.");
+        alert("Netzwerkfehler beim Löschen.");
     }
 }
 </script>
+
+<template>
+  <Navbar />
+  <main class="container py-5">
+    
+    <div v-if="isAdmin">
+      <h1>Benutzerverwaltung (Admin-Bereich)</h1>
+      <p>Willkommen, {{ user.name }}. Hier können Sie die Benutzerdaten verwalten.</p>
+      
+      <div class="mb-4 p-3 border rounded">
+          <h3>Neuen Benutzer hinzufügen</h3>
+          <input v-model="newUser.name" placeholder="Name" class="form-control mb-2" />
+          <input v-model="newUser.email" placeholder="E-Mail" class="form-control mb-2" />
+          <button @click="createUser" class="btn btn-primary">Erstellen</button>
+      </div>
+
+      <section v-if="!loading">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>E-Mail</th>
+              <th>Rolle</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="u in users" :key="u.id">
+              <td>{{ u.name }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.role }}</td>
+              <td>
+                <button @click="deleteUser(u.id)" class="btn btn-danger btn-sm">Löschen</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <div v-else>Lädt Daten...</div>
+    </div>
+
+    <div v-else-if="isAuthenticated" class="alert alert-warning text-center">
+      <h2>Zugriff verweigert</h2>
+      <p>Entschuldigung {{ user.name }}, nur Administratoren dürfen diese Liste sehen.</p>
+    </div>
+
+    <div v-else class="alert alert-danger text-center">
+      <p>Bitte loggen Sie sich ein, um fortzufahren.</p>
+    </div>
+
+  </main>
+  <Footer />
+</template>
