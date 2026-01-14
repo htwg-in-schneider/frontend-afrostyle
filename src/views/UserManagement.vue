@@ -194,6 +194,6 @@ async function deleteUser(id) {
 </template>
 
 <style scoped>
-.table-responsive { background: white; padding: 20px; border-radius: 12px; shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.table-responsive { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 .card { border-radius: 12px; border: none; background-color: #f8f9fa; }
 </style>

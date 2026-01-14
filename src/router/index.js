@@ -4,7 +4,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/AfroHome.vue';
 import Impressum from '@/views/Impressum.vue';
 import DatenschutzView from '@/views/DatenschutzView.vue';
+
+// 1. LES COMPOSANTS POUR LA QUESTION (b) - Admin-Seiten
 import UserManagement from '../views/UserManagement.vue';
+
+// 1. LES COMPOSANTS POUR LA QUESTION (c) - Transaktionsverwaltung
+import TransaktionenManagement from '../views/TransaktionenManagement.vue';
+import Panier from '../views/Panier.vue';
 
 // 2. TES COMPOSANTS EXISTANTS - Le Catalogue (Stammdaten)
 import ProductCatalog from '@/views/ProductCatalogTextile.vue';
@@ -64,7 +70,20 @@ const routes = [
     name: 'UserManagement',
     component: UserManagement
   },
+
+  {
+    path: '/admin/transaktionen',
+    name: 'TransaktionenManagement',
+    component: TransaktionenManagement
+  },
+
+  {
+    path: '/panier',
+    name: 'panier',
+    component: Panier
+  }
 ];
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
