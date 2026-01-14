@@ -8,9 +8,6 @@ import { createPinia } from 'pinia'
 const pinia = createPinia()
 const app = createApp(App)
 
-// Configuration d'Auth0 adaptée pour GitHub Pages
-// main.js
-import { createAuth0 } from '@auth0/auth0-vue';
 
 // ... (reste de ton code app)
 
