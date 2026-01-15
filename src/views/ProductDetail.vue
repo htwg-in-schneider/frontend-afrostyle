@@ -40,33 +40,7 @@
     }
   }
 
-  // --- NOUVELLE FONCTION : COMMANDE POUR L'ADMIN ---
-  async function commanderProduit(title, price) {
-    const email = prompt(`Möchten Sie ${title} kaufen?\nGeben Sie Ihre E-Mail ein:`);
-    
-    if (!email || !email.includes('@')) {
-      alert("Kauf abgebrochen oder ungültige E-Mail.");
-      return false; // On retourne false pour savoir que ça a échoué
-    }
 
-    const transactionData = {
-      customerEmail: email,
-      totalAmount: price,
-      status: "PAID"
-    };
-
-    try {
-      const response = await fetch(transactionUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(transactionData)
-      });
-      return response.ok;
-    } catch (error) {
-      console.error("Fehler beim Senden der Transaktion:", error);
-      return false;
-    }
-  }
 
   // --- NOUVELLE FONCTION CORRIGÉE (AVEC TOKEN) ---
   async function commanderProduit(title, price) {
