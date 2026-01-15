@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useAuth0 } from '@auth0/auth0-vue'; // 1. Importation
+import { useAuth0 } from '@auth0/auth0-vue'; 
+import { useRouter } from 'vue-router';
+
+// 1. Importation
 
 const cartCount = ref(0);
 
@@ -18,24 +21,15 @@ onMounted(() => {
 });
 
 // Fonction pour gérer la déconnexion
-const handleLogout = () => {
-  const confirmed = confirm("Voulez-vous vraiment vous déconnecter ? Votre panier sera vidé.");
-  
-  if (confirmed) {
-    // 1. Supprimer les données du panier dans le localStorage
+const router = useRouter();
+const handleLogout = async () => {
+  if (confirm("Déconnexion ?")) {
     localStorage.removeItem('cart');
     
-    // 2. Optionnel : Si vous voulez forcer la mise à jour immédiate de cartCount à 0
-    if (typeof cartCount !== 'undefined') {
-      cartCount.value = 0;
-    }
-
-    // 3. Procéder à la déconnexion Auth0
-    logout({ 
-      logoutParams: { 
-        returnTo: window.location.origin 
-      } 
-    });
+    await logout({ logoutParams: { returnTo: window.location.origin } });
+    
+    // Forcer le retour vers la page d'accueil après la déconnexion
+    router.push('/'); 
   }
 };
 </script>
@@ -80,10 +74,10 @@ const handleLogout = () => {
     <nav class="secondary-nav">
       <div class="container">
         <ul class="nav-links-list">
-          <li><router-link to="/" class="custom-text">Textile_Stoffe</router-link></li>
-          <li><a href="#" class="custom-text">Bekleidung</a></li>
-          <li><a href="#" class="custom-text">Accessoires</a></li>
-          <li><a href="#" class="custom-text">Home</a></li>
+          <li><router-link to="/products" class="custom-text">Textile_Stoffe</router-link></li>
+          <li><router-link to="/products" class="custom-text">Bekleidung</router-link></li>
+          <li><router-link to="/products" class="custom-text">Accessoires</router-link></li>
+          <li><router-link to="/products" class="custom-text">Home_Artikeln</router-link></li>
           <template v-if="isAuthenticated">
             <li class="admin-separator">|</li>
             <li><router-link to="/admin/users" class="custom-text admin-link">Users</router-link></li>
