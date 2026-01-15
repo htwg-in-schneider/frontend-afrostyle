@@ -1,3 +1,43 @@
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useAuth0 } from '@auth0/auth0-vue'; // 1. Import de Auth0
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+
+const transactions = ref([]);
+const { getAccessTokenSilently } = useAuth0(); // 2. Extraction de la fonction token
+
+const fetchData = async () => {
+  try {
+    // 3. Récupération du jeton admin
+    const token = await getAccessTokenSilently();
+
+    const response = await fetch("http://localhost:8080/api/transaktionen", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // 4. Envoi du token au backend
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur: ${response.status}`);
+    }
+
+    transactions.value = await response.json();
+  } catch (err) {
+    console.error("Erreur de récupération des transactions :", err);
+    // Optionnel: Rediriger si 401 ou afficher un message d'erreur
+  }
+};
+
+onMounted(fetchData);
+</script>
+
+
+
+
 <template>
   <Navbar />
   <div class="container mt-5 pt-5">
@@ -34,22 +74,3 @@
   </div>
   <Footer />
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import Navbar from '@/components/Navbar.vue';
-import Footer from '@/components/Footer.vue';
-
-const transactions = ref([]);
-
-const fetchData = async () => {
-  try {
-    const response = await fetch("http://localhost:8080/api/transaktionen");
-    transactions.value = await response.json();
-  } catch (err) {
-    console.error("Erreur de récupération", err);
-  }
-};
-
-onMounted(fetchData);
-</script>
