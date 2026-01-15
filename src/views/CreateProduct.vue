@@ -1,27 +1,42 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuth0 } from '@auth0/auth0-vue';
 import Button from '@/components/Button.vue';
 
+
+const { getAccessTokenSilently } = useAuth0(); // Récupérez la fonction de jeton
 const router = useRouter();
 const url = `${import.meta.env.VITE_API_BASE_URL}/api/product`;
 const product = ref({ title: '', price: 0, imageUrl: '', description: '' });
 
 async function createProduct() {
   try {
+    // 1. Récupérer le jeton de sécurité
+    const token = await getAccessTokenSilently();
+
+    // 2. Envoyer la requête avec le header Authorization
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // AJOUT INDISPENSABLE
+      },
       body: JSON.stringify(product.value),
     });
+
     if (!response.ok) {
-      throw new Error(`Fehler beim Erstellen: ${response.status}`);
+      // Analyse de l'erreur pour déboguer
+      const errorData = await response.json();
+      console.error("Détails du serveur:", errorData);
+      throw new Error(`Fehler: ${response.status}`);
     }
+
     alert('Produkt erfolgreich erstellt!');
-    router.push('/');
+    router.push('/products'); // Redirige vers la liste des produits
   } catch (error) {
-    console.error('Fehler beim Erstellen des Produkts:', error);
-    alert('Produkt konnte nicht erstellt werden.');
+    console.error('Fehler beim Erstellen:', error);
+    alert('Produkt konnte nicht erstellt werden. Prüfen Sie die Konsole.');
   }
 }
 </script>
