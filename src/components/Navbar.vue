@@ -17,6 +17,12 @@ const updateCartCount = () => {
 
 onMounted(() => {
   updateCartCount();
+  // Écouter les mises à jour manuelles
+  window.addEventListener('cart-updated', updateCartCount);
+});
+
+onMounted(() => {
+  updateCartCount();
   setInterval(updateCartCount, 1000);
 });
 

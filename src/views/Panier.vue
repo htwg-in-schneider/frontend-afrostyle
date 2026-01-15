@@ -9,12 +9,38 @@ const total = ref(0);
 const loadCart = () => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
   cartItems.value = cart;
-  total.value = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  calculateTotal();
+};
+
+const calculateTotal = () => {
+  total.value = cartItems.value.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+};
+
+// AJOUT : Supprimer un seul article
+const removeItem = (id) => {
+  cartItems.value = cartItems.value.filter(item => item.id !== id);
+  localStorage.setItem('cart', JSON.stringify(cartItems.value));
+  calculateTotal();
+};
+
+// AJOUT : Changer la quantité (+ ou -)
+const updateQuantity = (id, delta) => {
+  const item = cartItems.value.find(i => i.id === id);
+  if (item) {
+    item.quantity += delta;
+    if (item.quantity <= 0) {
+      removeItem(id);
+    } else {
+      localStorage.setItem('cart', JSON.stringify(cartItems.value));
+      calculateTotal();
+      notifyCartUpdate(); // Actualise le badge Navbar
+    }
+  }
 };
 
 // Fonction déclenchée lors du clic sur "Kasse"
 const handleCheckout = () => {
-  alert("Vielen Dank! Ihr Kauf wurde bestätigt. Sie erhalten in Kürze eine Bestätigung.");
+  alert("Vielen Dank! Ihr Kauf wurde bestätigt.");
   localStorage.removeItem('cart');
   // On ne force pas le rechargement ici car le router-link nous déplace vers l'accueil
 };
@@ -22,8 +48,12 @@ const handleCheckout = () => {
 
 
 const clearCart = () => {
-  localStorage.removeItem('cart');
-  loadCart();
+  if (confirm("Möchten Sie den gesamten Warenkorb leeren?")) {
+    localStorage.removeItem('cart');
+    cartItems.value = [];
+    total.value = 0;
+    notifyCartUpdate(); // Actualise le badge Navbar
+  }
 };
 
 onMounted(loadCart);
@@ -43,14 +73,26 @@ onMounted(loadCart);
               <th>Preis</th>
               <th>Anzahl</th>
               <th>Gesamt</th>
+              <th>Aktion</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in cartItems" :key="item.id">
               <td>{{ item.title }}</td>
               <td>{{ item.price }} €</td>
-              <td>{{ item.quantity }}</td>
+              <td>
+                <div class="d-flex justify-content-center align-items-center">
+                  <button @click="updateQuantity(item.id, -1)" class="btn btn-sm btn-outline-secondary">-</button>
+                  <span class="mx-3 fw-bold">{{ item.quantity }}</span>
+                  <button @click="updateQuantity(item.id, 1)" class="btn btn-sm btn-outline-secondary">+</button>
+                </div>
+              </td>
               <td><strong>{{ (item.price * item.quantity).toFixed(2) }} €</strong></td>
+              <td>
+                <button @click="removeItem(item.id)" class="btn btn-sm btn-link text-danger">
+                  <i class="bi bi-trash fs-5"></i>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -58,10 +100,12 @@ onMounted(loadCart);
       
       <div class="d-flex justify-content-between align-items-center">
         <h4>Gesamtsumme: <span class="text-accent">{{ total.toFixed(2) }} €</span></h4>
-        <button @click="clearCart" class="btn btn-outline-danger">Warenkorb leeren</button>
-        <router-link to="/" class="btn btn-success px-4" @click="handleCheckout">
-            <i class="bi bi-check-circle me-2"></i>Kasse
-        </router-link>
+        <div class="d-flex gap-3">
+            <button @click="clearCart" class="btn btn-outline-danger">Warenkorb leeren</button>
+            <router-link to="/" class="btn btn-success px-4" @click="handleCheckout">
+                <i class="bi bi-check-circle me-2"></i>Kasse
+            </router-link>
+        </div>
       </div>
     </div>
 
