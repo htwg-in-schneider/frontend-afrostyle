@@ -20,7 +20,7 @@ const newUser = ref({ name: '', email: '', role: 'USER' });
  */
 const isAdmin = computed(() => {
     // ACHTUNG: Ersetzen Sie dies durch Ihre tatsächliche Admin-E-Mail
-    return user.value?.email === "votre-email@exemple.com"; 
+    return user.value?.email === "Madeleine.PahwangFotso@gmail.com"; 
 });
 
 /**

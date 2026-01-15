@@ -19,7 +19,24 @@ onMounted(() => {
 
 // Fonction pour gérer la déconnexion
 const handleLogout = () => {
-  logout({ logoutParams: { returnTo: window.location.origin } });
+  const confirmed = confirm("Voulez-vous vraiment vous déconnecter ? Votre panier sera vidé.");
+  
+  if (confirmed) {
+    // 1. Supprimer les données du panier dans le localStorage
+    localStorage.removeItem('cart');
+    
+    // 2. Optionnel : Si vous voulez forcer la mise à jour immédiate de cartCount à 0
+    if (typeof cartCount !== 'undefined') {
+      cartCount.value = 0;
+    }
+
+    // 3. Procéder à la déconnexion Auth0
+    logout({ 
+      logoutParams: { 
+        returnTo: window.location.origin 
+      } 
+    });
+  }
 };
 </script>
 
@@ -36,7 +53,7 @@ const handleLogout = () => {
         </div>
 
         <div class="header-icons">
-          <a href="#" class="icon-link"><i class="bi bi-search"></i></a>
+          <router-link to="/products" class="icon-link"><i class="bi bi-search"></i></router-link>
           
           <router-link to="/panier" class="icon-link position-relative">
             <i class="bi bi-cart"></i>

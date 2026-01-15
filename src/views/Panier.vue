@@ -12,6 +12,15 @@ const loadCart = () => {
   total.value = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 };
 
+// Fonction déclenchée lors du clic sur "Kasse"
+const handleCheckout = () => {
+  alert("Vielen Dank! Ihr Kauf wurde bestätigt. Sie erhalten in Kürze eine Bestätigung.");
+  localStorage.removeItem('cart');
+  // On ne force pas le rechargement ici car le router-link nous déplace vers l'accueil
+};
+
+
+
 const clearCart = () => {
   localStorage.removeItem('cart');
   loadCart();
@@ -50,6 +59,9 @@ onMounted(loadCart);
       <div class="d-flex justify-content-between align-items-center">
         <h4>Gesamtsumme: <span class="text-accent">{{ total.toFixed(2) }} €</span></h4>
         <button @click="clearCart" class="btn btn-outline-danger">Warenkorb leeren</button>
+        <router-link to="/" class="btn btn-success px-4" @click="handleCheckout">
+            <i class="bi bi-check-circle me-2"></i>Kasse
+        </router-link>
       </div>
     </div>
 
@@ -64,4 +76,8 @@ onMounted(loadCart);
 
 <style scoped>
 .text-accent { color: #EA9424; font-weight: bold; }
+.btn-success {
+  background-color: #EA9424;
+  border-color: #333;
+}
 </style>
