@@ -18,10 +18,16 @@
 
   const product = ref(null);
   const router = useRouter();
+  // Fonction pour actualiser le badge de la Navbar instantanément
+  const notifyCartUpdate = () => {
+    window.dispatchEvent(new CustomEvent('cart-updated'));
+  };
 
   onMounted(() => {
     fetchProduct();
   });
+
+  
 
   async function fetchProduct() {
     try {
@@ -62,14 +68,50 @@
     }
   }
 
-  // --- MISE À JOUR : AJOUT AU PANIER + COMMANDE ---
+  // --- NOUVELLE FONCTION CORRIGÉE (AVEC TOKEN) ---
+  async function commanderProduit(title, price) {
+    const email = prompt(`Möchten Sie ${title} kaufen?\nGeben Sie Ihre E-Mail ein:`);
+    
+    if (!email || !email.includes('@')) {
+      alert("Kauf abgebrochen oder ungültige E-Mail.");
+      return false;
+    }
+
+    try {
+      // RÉCUPÉRATION DU TOKEN POUR ÉVITER LA 401
+      const token = await getAccessTokenSilently();
+
+      const transactionData = {
+        customerEmail: email,
+        totalAmount: price,
+        status: "PAID"
+      };
+
+      const response = await fetch(transactionUrl, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // AJOUT DU TOKEN
+        },
+        body: JSON.stringify(transactionData)
+      });
+
+      if (!response.ok) {
+        if(response.status === 401) alert("Sitzung abgelaufen. Bitte neu einloggen.");
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error("Fehler beim Senden der Transaktion:", error);
+      return false;
+    }
+  }
+
   async function warenkorb() {
     if (!product.value) return;
 
-    // 1. On lance d'abord le processus de commande (le prompt)
     const success = await commanderProduit(product.value.title, product.value.price);
 
-    // 2. Si la commande est validée, on l'ajoute aussi au panier local
     if (success) {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const existing = cart.find(item => item.id === product.value.id);
@@ -86,21 +128,33 @@
       }
 
       localStorage.setItem('cart', JSON.stringify(cart));
+      
+      // ACTUALISATION DU PANIER PENDANT L'ACHAT
+      notifyCartUpdate(); 
+      
       alert(`${product.value.title} wurde bestellt und zum Warenkorb hinzugefügt!`);
     }
   }
 
+
+
+
+// --- DELETE AUSSI AVEC TOKEN ---
   async function deleteProduct() {
     if (!product.value) return;
-    const confirmDelete = confirm('Möchten Sie dieses Produkt wirklich löschen?');
+    const confirmDelete = confirm('Möchten Sie dieses %product% wirklich löschen?');
     if (!confirmDelete) return;
     try {
-      const response = await fetch(`${url}/${props.id}`, { method: 'DELETE' });
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${url}/${props.id}`, { 
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (!response.ok) throw new Error('Fehler beim Löschen');
       alert('Produkt erfolgreich gelöscht!');
       router.push('/');
     } catch (error) {
-      alert('Produkt konnte nicht gelöscht werden.');
+      alert('Erreur 401: Sie haben keine Berechtigung.');
     }
   }
 

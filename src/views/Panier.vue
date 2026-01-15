@@ -6,6 +6,11 @@ import Footer from '@/components/Footer.vue';
 const cartItems = ref([]);
 const total = ref(0);
 
+// 1. Définition de la notification (Manquait dans votre script)
+const notifyCartUpdate = () => {
+  window.dispatchEvent(new CustomEvent('cart-updated'));
+};
+
 const loadCart = () => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
   cartItems.value = cart;
@@ -21,6 +26,7 @@ const removeItem = (id) => {
   cartItems.value = cartItems.value.filter(item => item.id !== id);
   localStorage.setItem('cart', JSON.stringify(cartItems.value));
   calculateTotal();
+  notifyCartUpdate(); // Pour mettre à jour la Navbar
 };
 
 // AJOUT : Changer la quantité (+ ou -)
@@ -43,6 +49,7 @@ const handleCheckout = () => {
   alert("Vielen Dank! Ihr Kauf wurde bestätigt.");
   localStorage.removeItem('cart');
   // On ne force pas le rechargement ici car le router-link nous déplace vers l'accueil
+  notifyCartUpdate(); // Actualise le badge Navbar
 };
 
 
