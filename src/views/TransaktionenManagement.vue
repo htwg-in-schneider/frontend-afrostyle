@@ -7,13 +7,14 @@ import Footer from '@/components/Footer.vue';
 
 const transactions = ref([]);
 const { getAccessTokenSilently } = useAuth0(); // 2. Extraction de la fonction token
+const url = `${import.meta.env.VITE_API_BASE_URL}/api/transaktionen`;
 
 const fetchData = async () => {
   try {
     // 3. Récupération du jeton admin
     const token = await getAccessTokenSilently();
 
-    const response = await fetch("http://localhost:8080/api/transaktionen", {
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

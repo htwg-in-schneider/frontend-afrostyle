@@ -23,27 +23,29 @@ const isAdmin = computed(() => {
     return user.value?.email === "Madeleine.PahwangFotso@gmail.com"; 
 });
 
-/**
- * SCHRITT 1: READ - Benutzerliste laden (Nur für Admins)
- */
-const fetchUsers = async () => {
-    if (!isAdmin.value) {
-        loading.value = false;
-        return;
-    }
 
+// GET - Charger les utilisateurs
+const fetchUsers = async () => {
     try {
-        const token = await getAccessTokenSilently(); // JWT abrufen
+        const token = await getAccessTokenSilently(); 
+        
+        // --- AJOUTE CES LIGNES POUR VOIR TON TOKEN ---
+        console.log("CLIQUE SUR CE LIEN -> https://jwt.io");
+        console.log("PUIS COLLE CE CODE DANS LA CASE DE GAUCHE :");
+        console.log(token); 
+        // ---------------------------------------------
+
         const response = await fetch(url, {
-            headers: { 'Authorization': `Bearer ${token}` } // Token im Header senden
+            headers: { 'Authorization': `Bearer ${token}` }
         });
+        
         if (response.ok) {
             users.value = await response.json();
+        } else {
+            console.error("Le serveur a répondu avec l'erreur :", response.status);
         }
     } catch (error) {
-        console.error("Fehler beim Laden:", error);
-    } finally {
-        loading.value = false;
+        console.error("Erreur de récupération :", error);
     }
 };
 
@@ -52,79 +54,46 @@ onMounted(fetchUsers);
 /**
  * SCHRITT 2: CREATE - Benutzer erstellen
  */
+// POST - Créer
 async function createUser() {
-    if (!newUser.value.name || !newUser.value.email.includes('@')) {
-        alert("Eingabe ungültig: Name und E-Mail erforderlich.");
-        return;
-    }
-
     try {
         const token = await getAccessTokenSilently();
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(newUser.value)
         });
-
         if (response.ok) {
-            alert("Erfolgreich erstellt!");
             newUser.value = { name: '', email: '', role: 'USER' };
             await fetchUsers();
         }
-    } catch (error) {
-        alert("Fehler beim Erstellen des Benutzers.");
-    }
+    } catch (error) { alert("Fehler beim Erstellen."); }
 }
 
-/**
- * SCHRITT 3: UPDATE - Benutzerdaten aktualisieren
- */
-async function saveUser(userObj, newRole = null) {
-    const updatedUser = { ...userObj, role: newRole || userObj.role };
-
+// PUT - Modifier (Sauvegarder les changements)
+async function saveUserChanges(userObj) {
     try {
         const token = await getAccessTokenSilently();
         const response = await fetch(`${url}/${userObj.id}`, {
             method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            },
-            body: JSON.stringify(updatedUser)
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(userObj)
         });
-
-        if (response.ok) {
-            if (newRole) userObj.role = newRole;
-            alert("Aktualisierung erfolgreich!");
-        }
-    } catch (error) {
-        alert("Fehler bei der Aktualisierung.");
-    }
+        if (response.ok) alert("Utilisateur mis à jour !");
+    } catch (error) { alert("Fehler bei der Aktualisierung."); }
 }
 
-/**
- * SCHRITT 4: DELETE - Benutzer löschen
- */
+// DELETE - Supprimer
 async function deleteUser(id) {
-    if (!confirm("Möchten Sie diesen Benutzer wirklich löschen?")) return;
-
+    if (!confirm("Voulez-vous supprimer cet utilisateur ?")) return;
     try {
         const token = await getAccessTokenSilently();
         const response = await fetch(`${url}/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` } 
         });
-
-        if (response.ok) {
-            alert("Benutzer gelöscht.");
-            await fetchUsers();
-        }
-    } catch (error) {
-        alert("Netzwerkfehler beim Löschen.");
-    }
+        if (response.ok) await fetchUsers();
+    } catch (error) { alert("Fehler beim Löschen."); }
 }
 </script>
 
@@ -136,11 +105,19 @@ async function deleteUser(id) {
       <h1>Benutzerverwaltung (Admin-Bereich)</h1>
       <p>Willkommen, {{ user.name }}. Hier können Sie die Benutzerdaten verwalten.</p>
       
-      <div class="mb-4 p-3 border rounded">
-          <h3>Neuen Benutzer hinzufügen</h3>
-          <input v-model="newUser.name" placeholder="Name" class="form-control mb-2" />
-          <input v-model="newUser.email" placeholder="E-Mail" class="form-control mb-2" />
-          <button @click="createUser" class="btn btn-primary">Erstellen</button>
+      <div class="card p-4 mb-5 shadow-sm">
+          <h4>Ajouter un nouvel utilisateur</h4>
+          <div class="row g-2">
+            <div class="col-md-4"><input v-model="newUser.name" placeholder="Nom" class="form-control" /></div>
+            <div class="col-md-4"><input v-model="newUser.email" placeholder="Email" class="form-control" /></div>
+            <div class="col-md-2">
+              <select v-model="newUser.role" class="form-select">
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </div>
+            <div class="col-md-2"><button @click="createUser" class="btn btn-primary w-100">Ajouter</button></div>
+          </div>
       </div>
 
       <section v-if="!loading">
@@ -155,11 +132,19 @@ async function deleteUser(id) {
           </thead>
           <tbody>
             <tr v-for="u in users" :key="u.id">
-              <td>{{ u.name }}</td>
-              <td>{{ u.email }}</td>
-              <td>{{ u.role }}</td>
+              <td><input v-model="u.name" class="form-control form-control-sm border-0 bg-light" /></td>
+              <td><input v-model="u.email" class="form-control form-control-sm border-0 bg-light" /></td>
               <td>
-                <button @click="deleteUser(u.id)" class="btn btn-danger btn-sm">Löschen</button>
+                <select v-model="u.role" class="form-select form-select-sm">
+                  <option value="USER">USER</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button @click="saveUserChanges(u)" class="btn btn-success btn-sm"><i class="bi bi-save"></i></button>
+                  <button @click="deleteUser(u.id)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                </div>
               </td>
             </tr>
           </tbody>
