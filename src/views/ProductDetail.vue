@@ -5,9 +5,16 @@
   import Button from '@/components/Button.vue';
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
+  import { useAuth0 } from '@auth0/auth0-vue'; // 1. On importe le hook
 
   const url = `${import.meta.env.VITE_API_BASE_URL}/api/product`;
   const transactionUrl = `${import.meta.env.VITE_API_BASE_URL}/api/transaktionen`; // URL pour l'admin
+  
+  
+ 
+
+  // 2. ON DÉCLARE LA FONCTION ICI (C'est ce qui manque !)
+  const { getAccessTokenSilently } = useAuth0();
 
   const props = defineProps({
       id: {
