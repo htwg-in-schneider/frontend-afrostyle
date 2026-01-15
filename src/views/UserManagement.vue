@@ -41,6 +41,7 @@ const fetchUsers = async () => {
         
         if (response.ok) {
             users.value = await response.json();
+            loading = false;
         } else {
             console.error("Le serveur a répondu avec l'erreur :", response.status);
         }
