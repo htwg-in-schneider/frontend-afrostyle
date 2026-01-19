@@ -18,32 +18,22 @@ const newUser = ref({ name: '', email: '', role: 'USER' });
  * Ein einfacher Nutzer darf die Liste nicht sehen.
  * Prüfung basierend auf der E-Mail des angemeldeten Benutzers.
  */
-const isAdmin = computed(() => {
-    // ACHTUNG: Ersetzen Sie dies durch Ihre tatsächliche Admin-E-Mail
-    return user.value?.email === "Madeleine.PahwangFotso@gmail.com"; 
-});
+const isAdmin = computed(() => isAuthenticated.value);
 
 
 // GET - Charger les utilisateurs
+// 1. Déclare ta variable comme ceci en haut du script
+
 const fetchUsers = async () => {
     try {
-        const token = await getAccessTokenSilently(); 
-        
-        // --- AJOUTE CES LIGNES POUR VOIR TON TOKEN ---
-        console.log("CLIQUE SUR CE LIEN -> https://jwt.io");
-        console.log("PUIS COLLE CE CODE DANS LA CASE DE GAUCHE :");
-        console.log(token); 
-        // ---------------------------------------------
-
+        const token = await getAccessTokenSilently();
         const response = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        
+
         if (response.ok) {
-            users.value = await response.json();
-            loading = false;
-        } else {
-            console.error("Le serveur a répondu avec l'erreur :", response.status);
+            // 2. CORRECTION ICI : Ajoute ".value" pour modifier une ref
+            users.value = await response.json(); 
         }
     } catch (error) {
         console.error("Erreur de récupération :", error);

@@ -29,13 +29,16 @@ onMounted(() => {
 // Fonction pour gérer la déconnexion
 const router = useRouter();
 const handleLogout = async () => {
-  if (confirm("Déconnexion ?")) {
+  if (confirm("Voulez-vous vraiment vous déconnecter ?")) {
+    // 1. Nettoyer les données locales
     localStorage.removeItem('cart');
     
-    await logout({ logoutParams: { returnTo: window.location.origin } });
-    
-    // Forcer le retour vers la page d'accueil après la déconnexion
-    router.push('/'); 
+    // 2. Appeler logout (Auth0 gère lui-même la redirection finale)
+    await logout({ 
+      logoutParams: { 
+        returnTo: window.location.origin // C'est ici qu'on définit le retour à l'accueil
+      } 
+    });
   }
 };
 </script>
