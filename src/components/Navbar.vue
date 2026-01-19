@@ -68,10 +68,13 @@ const handleLogout = async () => {
               <i class="bi bi-person-circle"></i>
             </a>
 
-            <div v-else class="d-flex align-items-center gap-2">
-              <span class="user-name">{{ user.nickname }}</span>
-              <img :src="user.picture" class="user-avatar" alt="Profil">
-              <a href="#" @click.prevent="handleLogout" class="icon-link logout-icon">
+            <div v-else class="d-flex align-items-center gap-3">
+              <router-link to="/profile" class="d-flex align-items-center gap-2 text-decoration-none">
+                <span class="user-name">{{ user.nickname }}</span>
+                <img :src="user.picture" class="user-avatar" alt="Profil">
+              </router-link>
+
+              <a href="#" @click.prevent="handleLogout" class="icon-link logout-icon" title="Déconnexion">
                 <i class="bi bi-box-arrow-right"></i>
               </a>
             </div>

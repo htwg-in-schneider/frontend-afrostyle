@@ -11,6 +11,7 @@ import UserManagement from '../views/UserManagement.vue';
 // 1. LES COMPOSANTS POUR LA QUESTION (c) - Transaktionsverwaltung
 import TransaktionenManagement from '../views/TransaktionenManagement.vue';
 import Panier from '../views/Panier.vue';
+import Profile from '../views/Profile.vue';
 
 // 2. TES COMPOSANTS EXISTANTS - Le Catalogue (Stammdaten)
 import ProductCatalog from '@/views/ProductCatalogTextile.vue';
@@ -81,6 +82,12 @@ const routes = [
     path: '/panier',
     name: 'panier',
     component: Panier
+  },
+
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile
   }
 ];
 
