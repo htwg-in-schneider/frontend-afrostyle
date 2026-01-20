@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { authGuard } from '@auth0/auth0-vue';
 
 // 1. LES COMPOSANTS POUR LA QUESTION (a) - La Startseite et le Légal
 import HomeView from '@/views/AfroHome.vue';
 import Impressum from '@/views/Impressum.vue';
 import DatenschutzView from '@/views/DatenschutzView.vue';
+import KontaktForm from '@/components/KontaktForm.vue';
 
 // 1. LES COMPOSANTS POUR LA QUESTION (b) - Admin-Seiten
 import UserManagement from '../views/UserManagement.vue';
@@ -85,10 +87,17 @@ const routes = [
   },
 
   {
+    path: '/KontaktForm',
+    name: '/KontaktForm',
+    component: KontaktForm
+  },
+  {
     path: '/profile',
     name: 'Profile',
-    component: Profile
-  }
+    component: Profile,
+    beforeEnter: authGuard 
+  },
+
 ];
 
 

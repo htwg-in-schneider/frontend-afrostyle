@@ -7,20 +7,14 @@ import FooterLink from './FooterLink.vue';
     <div class="container d-flex justify-content-between align-items-start flex-wrap">
 
       <div class="d-flex flex-column align-items-start gap-2">
-        <span class="contact-number">01590256088</span>
-        <div class="social-icons d-flex gap-3">
-          <a href="https://www.instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
-          <a href="https://www.facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
-        </div>
+        <FooterLink text="Kontakt" href="/KontaktForm" />
       </div>
 
       <div class="d-flex flex-column">
-        <FooterLink text="Hilfe" href="/hilfe" />
-        <FooterLink text="Blog" href="/blog" />
+        <FooterLink text="Impressum" href="/impressum" />
       </div>
 
       <div class="d-flex flex-column align-items-end">
-        <FooterLink text="Impressum" href="/impressum" />
         <FooterLink text="Datenschutz" href="/datenschutz" />
       </div>
 

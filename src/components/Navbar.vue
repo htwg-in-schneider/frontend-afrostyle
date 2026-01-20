@@ -1,50 +1,82 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue'; // Ajout de computed
 import { useAuth0 } from '@auth0/auth0-vue'; 
 import { useRouter } from 'vue-router';
 
-// 1. Importation
-
+const { loginWithRedirect, logout, user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 const cartCount = ref(0);
+const isAdmin = ref(false);
+const router = useRouter();
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
-// 2. Récupération des outils Auth0
-const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
+// --- CLÉ DYNAMIQUE DU PANIER ---
+// On calcule la clé de la même manière que dans le panier et les produits
+const cartKey = computed(() => {
+  return isAuthenticated.value && user.value ? `cart_${user.value.sub}` : 'cart_guest';
+});
 
+async function checkAdminRole() {
+  if (!isAuthenticated.value) {
+    isAdmin.value = false;
+    return;
+  }
+  try {
+    const token = await getAccessTokenSilently();
+    const response = await fetch(`${API_URL}/api/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      isAdmin.value = data.role === 'ADMIN'; 
+    }
+  } catch (error) {
+    console.error('Erreur vérification rôle:', error);
+    isAdmin.value = false;
+  }
+}
+
+// --- GESTION DU PANIER ---
 const updateCartCount = () => {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  // On utilise cartKey.value au lieu de la clé fixe 'cart'
+  const cart = JSON.parse(localStorage.getItem(cartKey.value)) || [];
   cartCount.value = cart.reduce((acc, item) => acc + item.quantity, 0);
 };
 
+// RÉACTIVITÉ : On surveille le changement d'utilisateur pour rafraîchir le badge
+watch([isAuthenticated, user], async ([newAuth]) => {
+  if (newAuth) {
+    await checkAdminRole();
+  } else {
+    isAdmin.value = false;
+  }
+  // TRÈS IMPORTANT : Quand on change d'utilisateur (ou logout), on recalcule le badge
+  updateCartCount(); 
+}, { immediate: true });
+
 onMounted(() => {
   updateCartCount();
-  // Écouter les mises à jour manuelles
   window.addEventListener('cart-updated', updateCartCount);
 });
 
-onMounted(() => {
-  updateCartCount();
-  setInterval(updateCartCount, 1000);
-});
-
-// Fonction pour gérer la déconnexion
-const router = useRouter();
 const handleLogout = async () => {
   if (confirm("Voulez-vous vraiment vous déconnecter ?")) {
-    // 1. Nettoyer les données locales
-    localStorage.removeItem('cart');
-    
-    // 2. Appeler logout (Auth0 gère lui-même la redirection finale)
+    // Note : On ne vide pas forcément le localStorage ici pour que 
+    // l'utilisateur retrouve son panier à sa prochaine connexion !
     await logout({ 
-      logoutParams: { 
-        returnTo: window.location.origin // C'est ici qu'on définit le retour à l'accueil
-      } 
+      logoutParams: { returnTo: window.location.origin } 
     });
   }
 };
 </script>
 
 <template>      
-  <header class="main-header">  
+  <header class="main-header">
+    <div v-if="isAuthenticated" style="background: #ededed; color: black; padding: 20px; font-family: monospace; z-index: 9999; position: relative;">
+      <p>--- DEBUG ADMIN ---</p>
+      <p>Email: {{ user.email }}</p>
+      <p>Contenu du namespace: {{ user['https://afrostyle-api/role'] }}</p>
+      <p>Est Admin (résultat calculé): {{ isAdmin }}</p>
+    </div>  
     <div class="header-top-bar">
       <div class="container d-flex justify-content-between align-items-center">
         <router-link to="/" class="logo-wrapper">
@@ -90,10 +122,11 @@ const handleLogout = async () => {
           <li><router-link to="/products" class="custom-text">Bekleidung</router-link></li>
           <li><router-link to="/products" class="custom-text">Accessoires</router-link></li>
           <li><router-link to="/products" class="custom-text">Home_Artikeln</router-link></li>
-          <template v-if="isAuthenticated">
+          
+          <template v-if="isAdmin">
             <li class="admin-separator">|</li>
-            <li><router-link to="/admin/users" class="custom-text admin-link">Users</router-link></li>
-            <li><router-link to="/admin/transaktionen" class="custom-text admin-link">Transaktionen</router-link></li>
+            <li><router-link to="/admin/users" class="custom-text admin-link text-danger">Users 🛡️</router-link></li>
+            <li><router-link to="/admin/transaktionen" class="custom-text admin-link text-danger">Transactions</router-link></li>
           </template>
         </ul>
       </div>
@@ -102,36 +135,14 @@ const handleLogout = async () => {
 </template>
 
 <style scoped>
-/* Tes styles existants ... */
+/* Conserve tout ton CSS original */
+.user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #EA9424; object-fit: cover; }
+.user-name { font-size: 0.9rem; font-weight: bold; color: #333; }
+.logout-icon { font-size: 1.4rem !important; color: #dc3545 !important; }
+.admin-link { color: #8b0000 !important; } /* Un rouge foncé pour distinguer l'admin */
 
-.user-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid #EA9424;
-}
-
-.user-name {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.logout-icon {
-  font-size: 1.2rem !important;
-  color: #dc3545 !important; /* Couleur rouge pour la déconnexion */
-}
-
-/* On garde tout le reste de ton CSS identique */
-.main-header { width: 100%; background-color: #fff; }
-.header-top-bar { height: 100px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; }
-.logo-img { height: 70px; width: auto; }
-.header-icons { display: flex; gap: 25px; align-items: center; }
-.icon-link { font-size: 1.5rem; color: #000 !important; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: relative; }
-.cart-badge { position: absolute; top: -8px; right: -10px; background-color: #EA9424; color: white; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 50%; border: 2px solid white; min-width: 20px; text-align: center; }
-.icon-link:hover { transform: scale(1.1); color: #EA9424 !important; }
-.secondary-nav { background-color: #fff; padding: 15px 0; }
-.nav-links-list { display: flex; justify-content: center; gap: 40px; list-style: none; margin: 0; padding: 0; }
-.custom-text { font-family: 'La Belle Aurore', cursive; color: #EA9424; font-size: 26px; text-decoration: none; text-shadow: 1px 1px 0 #000; }
-.admin-separator { color: #ccc; font-size: 20px; }
+/* ... Reste de tes styles ... */
+.nav-links-list { display: flex; justify-content: center; align-items: center; gap: 30px; list-style: none; margin: 0; padding: 0; }
+.custom-text { font-family: 'La Belle Aurore', cursive; color: #EA9424; font-size: 24px; text-decoration: none; text-shadow: 1px 1px 0 #000; }
+.admin-separator { color: #ccc; font-size: 20px; font-weight: bold; }
 </style>

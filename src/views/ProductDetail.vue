@@ -3,18 +3,16 @@
   import Navbar from '@/components/Navbar.vue';
   import NavButton from '@/components/NavButton.vue';
   import Button from '@/components/Button.vue';
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed } from 'vue'; // Ajout de computed
   import { useRouter } from 'vue-router';
-  import { useAuth0 } from '@auth0/auth0-vue'; // 1. On importe le hook
+  import { useAuth0 } from '@auth0/auth0-vue';
 
   const url = `${import.meta.env.VITE_API_BASE_URL}/api/product`;
-  const transactionUrl = `${import.meta.env.VITE_API_BASE_URL}/api/transaktionen`; // URL pour l'admin
+  const transactionUrl = `${import.meta.env.VITE_API_BASE_URL}/api/transaktionen`;
+  const profileUrl = `${import.meta.env.VITE_API_BASE_URL}/api/profile`;
   
-  
- 
-
-  // 2. ON DÉCLARE LA FONCTION ICI (C'est ce qui manque !)
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
+  const isAdmin = ref(false);
 
   const props = defineProps({
       id: {
@@ -25,16 +23,37 @@
 
   const product = ref(null);
   const router = useRouter();
-  // Fonction pour actualiser le badge de la Navbar instantanément
+
+  // CLÉ DYNAMIQUE : Le panier est rattaché à l'ID de l'utilisateur
+  // Si non connecté, on utilise 'cart_guest'
+  const cartKey = computed(() => {
+    return isAuthenticated.value && user.value ? `cart_${user.value.sub}` : 'cart_guest';
+  });
+
   const notifyCartUpdate = () => {
     window.dispatchEvent(new CustomEvent('cart-updated'));
   };
 
   onMounted(() => {
     fetchProduct();
+    checkAdminStatus();
   });
 
-  
+  async function checkAdminStatus() {
+    if (!isAuthenticated.value) return;
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(profileUrl, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const userData = await response.json();
+        isAdmin.value = userData.role === 'ADMIN';
+      }
+    } catch (error) {
+      console.error('Erreur vérification admin:', error);
+    }
+  }
 
   async function fetchProduct() {
     try {
@@ -47,16 +66,14 @@
     }
   }
 
-
-
-  // --- NOUVELLE FONCTION CORRIGÉE (AVEC TOKEN) ---
   async function commanderProduit(title, price) {
-    const email = prompt(`Möchten Sie ${title} in warenkorb stellen?:`);
+    // Utilisation de l'email de l'utilisateur connecté par défaut s'il existe
+    const defaultEmail = user.value?.email || "";
+    const email = prompt(`Möchten Sie ${title} in den Warenkorb stellen? Email bestätigen:`, defaultEmail);
+    if (!email) return false;
 
     try {
-      // RÉCUPÉRATION DU TOKEN POUR ÉVITER LA 401
       const token = await getAccessTokenSilently();
-
       const transactionData = {
         customerEmail: email,
         totalAmount: price,
@@ -67,16 +84,12 @@
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // AJOUT DU TOKEN
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(transactionData)
       });
 
-      if (!response.ok) {
-        if(response.status === 401) alert("Sitzung abgelaufen. Bitte neu einloggen.");
-        return false;
-      }
-      return true;
+      return response.ok;
     } catch (error) {
       console.error("Fehler beim Senden der Transaktion:", error);
       return false;
@@ -85,40 +98,32 @@
 
   async function warenkorb() {
     if (!product.value) return;
+    
+    // On force la connexion pour ajouter au panier (optionnel mais recommandé pour rattacher au compte)
+    if (!isAuthenticated.value) {
+      alert("Bitte loggen Sie sich ein, um Artikel zum Warenkorb hinzuzufügen.");
+      return;
+    }
 
     const success = await commanderProduit(product.value.title, product.value.price);
-
+    
     if (success) {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      // On utilise cartKey.value au lieu de 'cart'
+      const cart = JSON.parse(localStorage.getItem(cartKey.value)) || [];
       const existing = cart.find(item => item.id === product.value.id);
       
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        cart.push({ 
-          id: product.value.id, 
-          title: product.value.title, 
-          price: product.value.price, 
-          quantity: 1 
-        });
-      }
-
-      localStorage.setItem('cart', JSON.stringify(cart));
+      if (existing) existing.quantity += 1;
+      else cart.push({ id: product.value.id, title: product.value.title, price: product.value.price, quantity: 1 });
       
-      // ACTUALISATION DU PANIER PENDANT L'ACHAT
+      localStorage.setItem(cartKey.value, JSON.stringify(cart));
       notifyCartUpdate(); 
-      
-      alert(`${product.value.title} wurde bestellt und zum Warenkorb hinzugefügt!`);
+      alert(`${product.value.title} wurde zu Ihrem persönlichen Warenkorb hinzugefügt!`);
     }
   }
 
-
-
-
-// --- DELETE AUSSI AVEC TOKEN ---
   async function deleteProduct() {
     if (!product.value) return;
-    const confirmDelete = confirm('Möchten Sie dieses %product% wirklich löschen?');
+    const confirmDelete = confirm('Produkt wirklich löschen?');
     if (!confirmDelete) return;
     try {
       const token = await getAccessTokenSilently();
@@ -130,13 +135,12 @@
       alert('Produkt erfolgreich gelöscht!');
       router.push('/');
     } catch (error) {
-      alert('Erreur 401: Sie haben keine Berechtigung.');
+      alert('Zugriff verweigert.');
     }
   }
 
   function zurück() {
-    if (window.history.length > 1) router.back();
-    else router.push('/');
+    router.back();
   }
 
   const normalizeImageUrl = (url) => {
@@ -163,13 +167,14 @@
           <div class="d-flex flex-wrap gap-2 mt-4">
             <Button variant="secondary" @click="zurück">Zurück</Button>
             <Button variant="accent" @click="warenkorb">In den Warenkorb</Button>
-            <Button variant="danger" @click="deleteProduct">Löschen</Button>
-            <NavButton :to="`/product/edit/${product.id}`" variant="warning">Bearbeiten</NavButton>
+            
+            <Button v-if="isAdmin" variant="danger" @click="deleteProduct">Löschen</Button>
+            <NavButton v-if="isAdmin" :to="`/product/edit/${product.id}`" variant="warning">Bearbeiten</NavButton>
           </div>
         </div>
       </div>
       <div v-else class="text-center py-5">
-        <p>Produkt wird geladen oder wurde nicht gefunden...</p>
+        <p>Produkt wird geladen...</p>
         <NavButton variant="secondary" to="/">Zurück zur Übersicht</NavButton>
       </div>
     </section>

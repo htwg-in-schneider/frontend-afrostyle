@@ -18,6 +18,11 @@
       <router-link to="/products" class="btn btn-next mt-4">
         Next &rarr;
       </router-link>
+      <div class="banner-container mb-5 text-center">
+      <img src="../assets/image_2.svg"
+           alt="image_2" class="image-banner">
+    </div>
+
     </div>
   </div>
 </template>
@@ -55,6 +60,13 @@
   text-decoration: none;
   font-weight: bold;
   display: inline-block;
+}
+.image-banner {
+  display: block;      /* Transforme l'image en bloc */
+  margin: 0 auto;      /* Centre l'image horizontalement */
+  max-width: 100%;     /* Empêche l'image de dépasser sur mobile */
+  height: auto;        /* Garde les proportions */
+  max-height: 250px;   /* Ajuste selon la taille voulue comme sur ton image */
 }
 
 /* Version Mobile */

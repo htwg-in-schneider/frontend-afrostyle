@@ -5,7 +5,7 @@ import { createAuth0 } from '@auth0/auth0-vue'
 import App from './App.vue'
 import router from './router'
 
-const app = createApp(App)
+const pinia = createPinia()
 
 // Initialisation d'Auth0 avec les variables d'environnement
 const auth0 = createAuth0({
@@ -17,11 +17,10 @@ const auth0 = createAuth0({
         redirect_uri: window.location.origin + window.location.pathname
     }
 })
-
-app.use(createPinia())
-app.use(router)
-app.use(auth0)
-
-app.mount('#app')
+createApp(App)
+    .use(router)
+    .use(pinia)
+    .use(auth0)
+    .mount('#app')
 
 console.log('API Base URL:', import.meta.env.VITE_API_BASE_URL)

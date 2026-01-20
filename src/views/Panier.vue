@@ -1,18 +1,25 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useAuth0 } from '@auth0/auth0-vue'; // Import indispensable
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
 
+const { user, isAuthenticated } = useAuth0();
 const cartItems = ref([]);
 const total = ref(0);
 
-// 1. Définition de la notification (Manquait dans votre script)
+// Génère une clé unique pour le localStorage (ex: cart_auth0|12345)
+// Si non connecté, on utilise une clé temporaire 'cart_guest'
+const cartKey = computed(() => {
+  return isAuthenticated.value ? `cart_${user.value.sub}` : 'cart_guest';
+});
+
 const notifyCartUpdate = () => {
   window.dispatchEvent(new CustomEvent('cart-updated'));
 };
 
 const loadCart = () => {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cart = JSON.parse(localStorage.getItem(cartKey.value)) || [];
   cartItems.value = cart;
   calculateTotal();
 };
@@ -21,15 +28,13 @@ const calculateTotal = () => {
   total.value = cartItems.value.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 };
 
-// AJOUT : Supprimer un seul article
 const removeItem = (id) => {
   cartItems.value = cartItems.value.filter(item => item.id !== id);
-  localStorage.setItem('cart', JSON.stringify(cartItems.value));
+  localStorage.setItem(cartKey.value, JSON.stringify(cartItems.value));
   calculateTotal();
-  notifyCartUpdate(); // Pour mettre à jour la Navbar
+  notifyCartUpdate();
 };
 
-// AJOUT : Changer la quantité (+ ou -)
 const updateQuantity = (id, delta) => {
   const item = cartItems.value.find(i => i.id === id);
   if (item) {
@@ -37,29 +42,29 @@ const updateQuantity = (id, delta) => {
     if (item.quantity <= 0) {
       removeItem(id);
     } else {
-      localStorage.setItem('cart', JSON.stringify(cartItems.value));
+      localStorage.setItem(cartKey.value, JSON.stringify(cartItems.value));
       calculateTotal();
-      notifyCartUpdate(); // Actualise le badge Navbar
+      notifyCartUpdate();
     }
   }
 };
 
-// Fonction déclenchée lors du clic sur "Kasse"
 const handleCheckout = () => {
-  alert("Vielen Dank! Ihr Kauf wurde bestätigt.");
-  localStorage.removeItem('cart');
-  // On ne force pas le rechargement ici car le router-link nous déplace vers l'accueil
-  notifyCartUpdate(); // Actualise le badge Navbar
+  if (!isAuthenticated.value) {
+    alert("Bitte loggen Sie sich ein, um den Kauf abzuschließen.");
+    return;
+  }
+  alert(`Vielen Dank, ${user.value.name}! Ihr Kauf wurde bestätigt.`);
+  localStorage.removeItem(cartKey.value);
+  notifyCartUpdate();
 };
-
-
 
 const clearCart = () => {
   if (confirm("Möchten Sie den gesamten Warenkorb leeren?")) {
-    localStorage.removeItem('cart');
+    localStorage.removeItem(cartKey.value);
     cartItems.value = [];
     total.value = 0;
-    notifyCartUpdate(); // Actualise le badge Navbar
+    notifyCartUpdate();
   }
 };
 

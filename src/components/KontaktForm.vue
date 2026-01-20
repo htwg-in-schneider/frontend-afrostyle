@@ -2,19 +2,13 @@
 </script>
 
 
-
 <template>
   <section class="kontakt-section">
-    <div class="banner-container mb-5 text-center">
-      <img src="../assets/image_2.svg"
-           alt="image_2" class="image-banner">
-    </div>
-
     <div class="container pb-5">
       <div class="row justify-content-center">
         <div class="col-md-6 text-center">
           <h3 class="mb-4">Kontaktieren Sie uns</h3>
-          <form action="mailto:MadeleinePahwangFotso@htwg-konstanz.de" method="GET" enctype="text/plain">
+          <form action="mailto:MadeleinePahwangFotso@gmail.com" method="GET" enctype="text/plain">
             <div class="mb-3">
               <input type="text" name="subject" class="form-control custom-input" placeholder="subject" required>
             </div>
@@ -30,13 +24,6 @@
 </template>
 
 <style scoped>
-.image-banner {
-  display: block;      /* Transforme l'image en bloc */
-  margin: 0 auto;      /* Centre l'image horizontalement */
-  max-width: 100%;     /* Empêche l'image de dépasser sur mobile */
-  height: auto;        /* Garde les proportions */
-  max-height: 250px;   /* Ajuste selon la taille voulue comme sur ton image */
-}
 
 .custom-input {
   border: 1px solid #ccc;

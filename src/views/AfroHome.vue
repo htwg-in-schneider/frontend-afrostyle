@@ -8,6 +8,5 @@ import Footer from '@/components/Footer.vue'           // Avec tes liens légaux
 <template>
   <Navbar />
   <HeroAfro />
-  <KontaktForm />
   <Footer />
 </template>
