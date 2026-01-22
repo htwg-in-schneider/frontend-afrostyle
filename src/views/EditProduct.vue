@@ -2,7 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Button from '@/components/Button.vue';
+import { useAuth0 } from '@auth0/auth0-vue';
 
+const { getAccessTokenSilently } = useAuth0();
 const route = useRoute();
 const router = useRouter();
 const url = `${import.meta.env.VITE_API_BASE_URL}/api/product`;
@@ -29,9 +31,13 @@ async function fetchProduct() {
 
 async function updateProduct() {
   try {
+    // RÉCUPÉRATION DU TOKEN POUR ÉVITER LE 401
+    const token = await getAccessTokenSilently();
     const response = await fetch(`${url}/${product.value.id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+       },
       body: JSON.stringify(product.value),
     });
     if (!response.ok) {
@@ -48,8 +54,14 @@ async function updateProduct() {
 async function deleteProduct() {
   if (!confirm('Möchten Sie dieses Produkt wirklich löschen?')) return;
   try {
+    // RÉCUPÉRATION DU TOKEN
+    const token = await getAccessTokenSilently();
+
     const response = await fetch(`${url}/${product.value.id}`, {
       method: 'DELETE',
+      headers: { 
+        'Authorization': `Bearer ${token}` // <--- AJOUTÉ
+      },
     });
     if (!response.ok) {
       throw new Error(`Fehler beim Löschen: ${response.status}`);

@@ -87,7 +87,7 @@ const handleLogout = async () => {
           <img src="../assets/Ellipse1.svg" alt="" class="nav-shape-ellipse">
         </div>
 
-        <div class="header-icons">
+        <div class="header-icons d-flex align-items-center gap-3">
           <router-link to="/products" class="icon-link"><i class="bi bi-search"></i></router-link>
           
           <router-link to="/panier" class="icon-link position-relative">

@@ -7,6 +7,7 @@ import Button from '@/components/Button.vue';
 
 const route = useRoute();
 const router = useRouter();
+
 const id = route.params.id; // On récupère l'ID depuis l'URL
 const url = `${import.meta.env.VITE_API_BASE_URL}/api/product/${id}`;
 
